@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game Mobile</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Ẩn thanh cuộn */
+            position: relative; /* Để chứa các hộp quà bắn ra */
+        }
+        canvas {
+            border: 5% solid white;
+            background-color: black;
+            width: 80%;
+            max-width: 25%;
+            height: auto;
+        }
+        #controls {
+            margin-top: 2%;
+            display: flex;
+            justify-content: center;
+            gap: 5%;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 100%;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        #message {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            color: black;
+            font-size: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        #movement-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #movement-buttons div {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        /* CSS cho hình hộp quà */
+        #gift {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Ẩn hộp quà ban đầu */
+            width: 50px; /* Kích thước hộp quà */
+            height: 50px; /* Kích thước hộp quà */
+            cursor: pointer; /* Hiện con trỏ khi di chuột vào */
+        }
+        .gift {
+            position: absolute;
+            width: 30px; /* Kích thước của các hộp quà bắn ra */
+            height: 30px; /* Kích thước của các hộp quà bắn ra */
+            z-index: 100; /* Để hộp quà mới nằm trên cùng */
+            transition: transform 0.5s, opacity 0.5s; /* Hiệu ứng di chuyển và độ mờ */
+        }
+        .shake {
+            animation: shake 0.2s; /* Thêm hiệu ứng rung */
+        }
+        @keyframes shake {
+            0% { transform: translate(0); }
+            25% { transform: translate(-5px, 0); }
+            50% { transform: translate(5px, 0); }
+            75% { transform: translate(-5px, 0); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="maze" width="400" height="400"></canvas>
+    <div id="controls">
+        <button id="hintButton">Hint</button>
+        <button id="resetButton">Reset</button>
+        <button id="newMazeButton">Đổi Mê Cung</button>
+        <button id="goToEndButton">Tới Đích</button>
+    </div>
+    <div id="movement-buttons">
+        <button id="upButton">↑</button>
+        <div>
+            <button id="leftButton">←</button>
+            <button id="rightButton">→</button>
+        </div>
+        <button id="downButton">↓</button>
+    </div>
+    <div id="message">Chúc mừng bạn đã thắng!<br> Nhấn vào hình để mở quà.</div>
+    
+    <!-- Thêm hình ảnh hộp quà -->
+    <img id="gift" src="image/tym.png" alt="Hộp Quà">
+
+    <script src="mazeGame.js"></script>
+    <script>
+        const gift = document.getElementById('gift');
+        const body = document.body;
+
+        // Hiện hộp quà
+        gift.style.display = 'block';
+
+        gift.addEventListener('click', function() {
+            // Rung màn hình
+            body.classList.add('shake');
+
+            // Tạo và bắn ra nhiều hộp quà
+            for (let i = 0; i < 10; i++) {
+                const newGift = document.createElement('img');
+                newGift.src = "image/tym.png"; // Đường dẫn tới hình ảnh của hộp quà
+                newGift.className = 'gift';
+                newGift.style.top = Math.random() * window.innerHeight + 'px';
+                newGift.style.left = Math.random() * window.innerWidth + 'px';
+                newGift.style.opacity = '1';
+                body.appendChild(newGift);
+
+                // Tạo hiệu ứng di chuyển
+                setTimeout(() => {
+                    newGift.style.transform = 'scale(0)'; // Nhỏ lại hộp quà
+                    newGift.style.opacity = '0'; // Ẩn hộp quà
+                }, 500);
+
+                // Xóa hộp quà sau khi di chuyển
+                setTimeout(() => {
+                    body.removeChild(newGift);
+                }, 1000);
+            }
+
+            // Xóa hiệu ứng rung sau 200ms
+            setTimeout(() => {
+                body.classList.remove('shake');
+            }, 200);
+        });
+    </script>
+</body>
+</html>
